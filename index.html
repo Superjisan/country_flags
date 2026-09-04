@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Flags Game</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    <link rel="manifest" href="/country_flags/manifest.json">
+</head>
+
+<body>
+    <h1>Country Flags Game</h1>
+    <p>Welcome to the Country Flags Game! A flag is shown &mdash; name the country it belongs to.</p>
+    <div id="continent-buttons">
+        <button class="continent-btn" id="africa">Africa</button>
+        <button class="continent-btn" id="asia">Asia</button>
+        <button class="continent-btn" id="europe">Europe</button>
+        <button class="continent-btn" id="north-america">North America</button>
+        <button class="continent-btn" id="south-america">South America</button>
+        <button class="continent-btn" id="oceania">Oceania</button>
+        <button class="continent-btn active" id="world">World</button>
+    </div>
+    <div id="game-container">
+        <!-- Holds the name of the country currently being asked. Visually hidden
+             so it doesn't give the answer away, but kept in the DOM as the single
+             source of truth for the current round. -->
+        <p id="country" hidden></p>
+        <div id="flag-container">
+            <img id="country-flag" alt="Flag of the country to guess" hidden>
+            <p id="flag-missing" hidden>Flag image unavailable &mdash; skip to the next country.</p>
+        </div>
+        <div id="input-div">
+            <input list="countries-list" type="text" id="answer" placeholder="Enter the country" autocomplete="off">
+            <datalist id="countries-list">
+                <!-- Options will be populated dynamically -->
+            </datalist>
+        </div>
+        <div id="buttons-div">
+            <button id="submit">Submit</button>
+            <button id="skip">Skip</button>
+        </div>
+        <p id="feedback">
+
+        </p>
+        <p id="score">
+            Score: <span id="score-value">0</span>
+        </p>
+        <p id="progress">
+            Progress: <span id="progress-value">0</span> / <span id="total-countries">0</span>
+        </p>
+        <button id="share" hidden>Share Score</button>
+
+        <!-- Table containing all answers -->
+        <table id="answers-table">
+            <thead>
+                <tr>
+                    <th>Flag</th>
+                    <th>Country</th>
+                    <th>Result</th>
+                    <th>Your Answer</th>
+                </tr>
+            </thead>
+            <tbody id="answers-body">
+
+            </tbody>
+        </table>
+    </div>
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>

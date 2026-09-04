@@ -1,0 +1,145 @@
+#answer {
+    width: 20rem;
+    font-size: 1rem;
+    height: 2rem;
+}
+
+#submit {
+    height: 2rem;
+    color: white;
+    background-color: blue;
+    flex: 1 1 8rem;
+    max-width: 10rem;
+}
+
+#skip {
+    height: 2rem;
+    color: white;
+    background-color: gray;
+    flex: 1 1 8rem;
+    max-width: 10rem;
+}
+
+#buttons-div {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+#continent-buttons {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+#country[hidden] {
+    display: none;
+}
+
+#flag-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 12rem;
+    margin: 1rem 0;
+}
+
+/* The flag is the whole question here, so it gets far more room than the
+   thumbnail-sized hint flag in the capitals game. */
+#country-flag {
+    width: min(90vw, 20rem);
+    height: auto;
+    max-height: 13rem;
+    object-fit: contain;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+}
+
+#country-flag[hidden], #flag-missing[hidden] {
+    display: none;
+}
+
+#flag-missing {
+    font-style: italic;
+    color: #555;
+}
+
+#input-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+#answers-table {
+    margin-top: 1rem;
+    border-collapse: collapse;
+}
+
+#answers-table tr {
+    border: 1px solid black;
+}
+
+#answers-table tr th, #answers-table tr td {
+    border: 1px solid black;
+    padding: 0.5rem;
+}
+
+.answer-flag {
+    width: 3rem;
+    height: 2rem;
+    object-fit: contain;
+    display: block;
+}
+
+.continent-btn {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.continent-btn.active {
+    background-color: green;
+    color: white;
+}
+
+#feedback {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    min-height: 1.5em;
+}
+
+#score, #progress {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* the flex container collapses the whitespace around the <span>s, so the
+       gap puts the spacing back between "Progress:" and "1 / 201" */
+    gap: 0.35rem;
+    margin: 0.5rem 0;
+}
+
+#answers-table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#share {
+    display: block;
+    height: 2rem;
+    margin: 1rem auto;
+    padding: 0 1.5rem;
+    color: white;
+    background-color: green;
+    cursor: pointer;
+}
+
+#share[hidden] {
+    display: none;
+}
