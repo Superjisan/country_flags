@@ -31,3 +31,18 @@ Deno.test('world mode ratings share payload is under 1900 characters', async () 
   assertEquals(decodedRatings.S.length, ratings.S.length);
   assertEquals(decodedRatings.F.length, ratings.F.length);
 });
+
+Deno.test('rating URLs shared before countries were encoded still decode as tier counts', async () => {
+  setupDom();
+
+  const { decodeRatingPayload, decodeRatingPayloadFromHash } = await import('../js/share.js');
+  const legacyToken = btoa(JSON.stringify({ S: 2, A: 3, B: 1, C: 0, D: 0, F: 0 }));
+
+  const decoded = decodeRatingPayload(legacyToken);
+  assertEquals(decoded, { S: 2, A: 3, B: 1, C: 0, D: 0, F: 0 });
+
+  window.location.hash = `#continent=europe&ratings=${legacyToken}`;
+  const summary = decodeRatingPayloadFromHash();
+  assertEquals(summary.S, 2);
+  assertEquals(summary.continent, 'europe');
+});

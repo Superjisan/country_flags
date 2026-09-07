@@ -171,16 +171,18 @@ Deno.test('encoded rating URLs round-trip and offer a way to start rating again'
   setupDom();
   const game = await importGame();
 
-  const payload = { S: 2, A: 3, B: 1, C: 0, D: 0, F: 0 };
+  const payload = { S: ['France', 'Spain'], A: ['Italy'], B: [], C: [], D: [], F: [] };
   const encoded = game.encodeRatingPayload(payload);
   const decoded = game.decodeRatingPayload(encoded);
   assertEquals(decoded, payload);
 
   window.location.hash = `#continent=europe&ratings=${encoded}`;
   const summary = game.decodeRatingPayloadFromHash();
-  assertEquals(summary.S, 2);
-  assertEquals(summary.A, 3);
+  assertEquals(summary.S, ['France', 'Spain']);
+  assertEquals(summary.A, ['Italy']);
   assertEquals(summary.continent, 'europe');
+
+  window.dispatchEvent(new window.HashChangeEvent('hashchange'));
 
   assertEquals(document.getElementById('rate-own-flag') !== null, true);
   assertEquals(document.getElementById('mode-toggle').hidden, true);
