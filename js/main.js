@@ -1,4 +1,12 @@
-import { checkAnswer, switchMode, initGame } from './flags_game.js';
+import {
+  checkAnswer,
+  switchMode,
+  initGame,
+  setStudyMode,
+  showStudyCountry,
+  revealStudyCountry,
+  moveStudyIndex,
+} from './flags_game.js';
 import { MODE_DATASETS } from './game_state.js';
 import { registerCountryFlagErrorHandler } from './country_flag.js';
 import { registerServiceWorker } from './pwa.js';
@@ -21,6 +29,11 @@ document.getElementById('replay').addEventListener('click', () => {
   switchMode(currentMode);
 });
 document.getElementById('share').addEventListener('click', shareScore);
+document.getElementById('play-mode').addEventListener('click', () => setStudyMode(false));
+document.getElementById('study-mode').addEventListener('click', () => setStudyMode(true));
+document.getElementById('study-prev').addEventListener('click', () => moveStudyIndex(-1));
+document.getElementById('study-next').addEventListener('click', () => moveStudyIndex(1));
+document.getElementById('reveal-answer').addEventListener('click', () => revealStudyCountry());
 
 // button listeners for continents
 Object.keys(MODE_DATASETS).forEach((mode) => {

@@ -36,16 +36,14 @@
         <button class="continent-btn active" id="world">World</button>
     </div>
     <div id="game-container">
-        <!-- Holds the name of the country currently being asked. Visually hidden
-             so it doesn't give the answer away, but kept in the DOM as the single
-             source of truth for the current round. -->
-        <p id="country" hidden></p>
         <div id="flag-container">
             <img id="country-flag" alt="Flag of the country to guess" hidden>
             <p id="flag-missing" hidden>Flag image unavailable &mdash; skip to the next country.</p>
         </div>
         <div id="input-div">
             <input list="countries-list" type="text" id="answer" placeholder="Enter the country" autocomplete="off">
+            <p id="country" hidden></p>
+            <button id="reveal-answer" type="button" aria-label="Reveal country name" title="Reveal country name">👁️ Reveal</button>
             <datalist id="countries-list">
                 <!-- Options will be populated dynamically -->
             </datalist>
@@ -54,6 +52,10 @@
             <button id="submit">Submit</button>
             <button id="skip">Skip</button>
             <button id="replay" hidden>Replay</button>
+        </div>
+        <div id="study-controls" hidden>
+            <button id="study-prev" type="button">←</button>
+            <button id="study-next" type="button">→</button>
         </div>
         <p id="feedback">
 
@@ -65,6 +67,10 @@
             Progress: <span id="progress-value">0</span> / <span id="total-countries">0</span>
         </p>
         <button id="share" hidden>Share Score</button>
+        <div id="mode-toggle" class="mode-toggle">
+            <button id="play-mode" class="mode-toggle-btn active" type="button">🎮 Play</button>
+            <button id="study-mode" class="mode-toggle-btn" type="button">📚 Study</button>
+        </div>
 
         <!-- Table containing all answers -->
         <table id="answers-table">

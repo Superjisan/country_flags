@@ -16,3 +16,15 @@ export function loadGameState(isValidMode) {
   }
   return state;
 }
+
+export function saveGameMode(mode) {
+  localStorage.setItem(`${STORAGE_KEY}.mode`, JSON.stringify(mode));
+}
+
+export function loadGameMode() {
+  try {
+    return JSON.parse(localStorage.getItem(`${STORAGE_KEY}.mode`)) ?? 'play';
+  } catch {
+    return 'play';
+  }
+}

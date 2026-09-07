@@ -7,23 +7,27 @@
 #submit,
 #skip,
 #replay {
-    height: 2rem;
+    height: 2.25rem;
     color: white;
     width: 100%;
     max-width: none;
     flex: none;
+    border: none;
+    border-radius: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(20, 35, 90, 0.18);
 }
 
 #submit {
-    background-color: blue;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
 }
 
 #skip {
-    background-color: gray;
+    background: linear-gradient(135deg, #64748b, #94a3b8);
 }
 
 #replay {
-    background-color: blue;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
 }
 
 #buttons-div {
@@ -39,6 +43,68 @@
     max-width: none;
 }
 
+@media (min-width: 700px) {
+    #buttons-div {
+        flex-direction: row;
+        justify-content: center;
+        max-width: 34rem;
+        margin: 1rem auto;
+    }
+
+    #buttons-div > button {
+        width: min(14rem, 50%);
+        max-width: 14rem;
+    }
+}
+
+#study-controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+#study-controls > button,
+.mode-toggle-btn {
+    height: 2rem;
+    cursor: pointer;
+}
+
+#study-prev,
+#study-next {
+    width: 4.5rem;
+    max-width: none;
+    flex: 0 0 4.5rem;
+}
+
+.mode-toggle {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.mode-toggle-btn {
+    width: 100%;
+    max-width: none;
+    background: linear-gradient(135deg, #fdf2f8, #ede9fe);
+    color: #1f2937;
+    border: 2px solid rgba(79, 70, 229, 0.15);
+    border-radius: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.08);
+}
+
+.mode-toggle-btn.active {
+    background: linear-gradient(135deg, #22c55e, #14b8a6);
+    color: white;
+    border-color: rgba(20, 184, 166, 0.3);
+    box-shadow: 0 8px 18px rgba(34, 197, 94, 0.25);
+}
+
 #continent-buttons {
     width: 100%;
     display: flex;
@@ -47,8 +113,10 @@
     margin: 1rem 0;
 }
 
-#country[hidden] {
-    display: none;
+#country[hidden],
+#score[hidden],
+#progress[hidden] {
+    display: none !important;
 }
 
 #flag-container {
@@ -83,7 +151,33 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
     margin: 1rem 0;
+}
+
+#country {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #111;
+}
+
+#reveal-answer {
+    height: 2.1rem;
+    min-width: 2.5rem;
+    padding: 0 0.75rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, #fef3c7, #fcd34d);
+    color: #1f2937;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+}
+
+#reveal-answer.revealed {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
 }
 
 #answers-table {

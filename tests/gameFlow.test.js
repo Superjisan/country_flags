@@ -135,6 +135,44 @@ Deno.test('game-over feedback breaks the result into headline, score and judgmen
   assertMatch(feedback, /\n/);
 });
 
+Deno.test('study mode reveals the country name only after the reveal action and keeps a slideshow index', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('oceania');
+
+  const studyButton = document.getElementById('study-mode');
+  const revealButton = document.getElementById('reveal-answer');
+  const prevButton = document.getElementById('study-prev');
+  const nextButton = document.getElementById('study-next');
+
+  assertEquals(studyButton !== null, true);
+  assertEquals(revealButton !== null, true);
+  assertEquals(prevButton !== null, true);
+  assertEquals(nextButton !== null, true);
+
+  studyButton.click();
+  assertEquals(document.getElementById('country').hidden, true);
+  assertEquals(document.getElementById('score').hidden, true);
+
+  revealButton.click();
+  assertEquals(document.getElementById('country').hidden, false);
+  assertEquals(String(document.getElementById('progress-value').innerText), '1');
+  assertEquals(String(document.getElementById('total-countries').innerText), '14');
+
+  nextButton.click();
+  assertEquals(String(document.getElementById('progress-value').innerText), '2');
+  assertEquals(String(document.getElementById('total-countries').innerText), '14');
+
+  document.getElementById('play-mode').click();
+  assertEquals(document.getElementById('score').hidden, false);
+});
+
+Deno.test('study mode keeps the score hidden via the stylesheet', async () => {
+  setupDom();
+  const css = await Deno.readTextFile(new URL('../styles.css', import.meta.url));
+  assertMatch(css, /#score\[hidden\][\s\S]*display:\s*none\s*!important/i);
+});
+
 Deno.test('game over hides the answer buttons and shows a replay button', async () => {
   setupDom();
   const game = await importGame();
