@@ -3,7 +3,7 @@
         "continents": [
             "asia"
         ],
-        "flagSlug": "afghanistan"
+        "flagFile": "flags/afghanistan.svg"
     },
     "Albania": {
         "continents": [

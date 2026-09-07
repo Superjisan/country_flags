@@ -20,6 +20,17 @@ Deno.test('updateCountryFlag falls back to worldflags.net when there is no flagc
   assertEquals(document.getElementById('country-flag').hidden, false);
 });
 
+Deno.test('updateCountryFlag serves the committed copy for a country no flag host gets right', async () => {
+  setupDom();
+  const game = await importGame();
+  game.updateCountryFlag('Afghanistan');
+
+  assertEquals(document.getElementById('country-flag').src, 'http://localhost/flags/afghanistan.svg');
+  assertEquals(game.flagUrl('Afghanistan'), 'flags/afghanistan.svg');
+  assertEquals(document.getElementById('country-flag').hidden, false);
+  assertEquals(document.getElementById('flag-missing').hidden, true);
+});
+
 Deno.test('updateCountryFlag shows the unavailable notice when there is no ISO code or fallback slug', async () => {
   setupDom();
   const game = await importGame();
