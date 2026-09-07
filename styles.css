@@ -318,6 +318,7 @@
     margin: 1rem auto;
 }
 
-#share[hidden] {
-    display: none;
+#share[hidden],
+#replay[hidden] {
+    display: none !important;
 }

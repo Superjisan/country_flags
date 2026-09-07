@@ -189,6 +189,18 @@ Deno.test('study mode keeps the score hidden via the stylesheet', async () => {
   assertMatch(css, /#score\[hidden\][\s\S]*display:\s*none\s*!important/i);
 });
 
+Deno.test('replay stays hidden while the game is still in progress', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('oceania');
+
+  assertEquals(document.getElementById('replay').hidden, true);
+  answerCurrentCountry(game);
+  assertEquals(document.getElementById('replay').hidden, true);
+  answerCurrentCountry(game, { skip: true });
+  assertEquals(document.getElementById('replay').hidden, true);
+});
+
 Deno.test('game over hides the answer buttons and shows a replay button', async () => {
   setupDom();
   const game = await importGame();

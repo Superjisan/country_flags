@@ -189,11 +189,13 @@ export function playGame() {
 export function syncActionButtons() {
   const gameOver = isGameOver();
   const playView = !isStudyMode;
+  const replayButton = document.getElementById('replay');
 
   document.getElementById('buttons-div').hidden = isStudyMode;
   document.getElementById('submit').hidden = gameOver || !playView;
   document.getElementById('skip').hidden = gameOver || !playView;
-  document.getElementById('replay').hidden = !gameOver || isStudyMode;
+  replayButton.hidden = !gameOver || isStudyMode;
+  replayButton.setAttribute('aria-hidden', String(replayButton.hidden));
   document.getElementById('answer').disabled = gameOver || !playView;
   document.getElementById('answer').hidden = isStudyMode;
   document.getElementById('input-div').hidden = false;
@@ -212,6 +214,7 @@ export function resetGame(mode = 'world') {
   document.getElementById('progress-value').innerText = countriesPlayed.length;
   document.getElementById('total-countries').innerText = numCountries;
   document.getElementById('share').hidden = true;
+  document.getElementById('replay').hidden = true;
   document.getElementById('feedback').innerText = '';
   document.getElementById('country').hidden = true;
   clearAnswersTable();
