@@ -445,12 +445,50 @@ p {
     display: none !important;
 }
 
+.ratings-table {
+    margin: 0.75rem auto 0;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.ratings-table th {
+    width: 2rem;
+    padding: 0.3rem 0.75rem 0.3rem 0;
+    text-align: right;
+    vertical-align: middle;
+    color: #1f2937;
+}
+
+.ratings-table td {
+    padding: 0.3rem 0;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.ratings-table tr + tr th,
+.ratings-table tr + tr td {
+    border-top: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+.rated-flags {
+    display: grid;
+    grid-template-columns: repeat(5, 2.2rem);
+    gap: 0.3rem;
+    justify-items: center;
+    align-items: center;
+}
+
+.rated-flags-empty {
+    display: block;
+    color: #94a3b8;
+}
+
 .rated-flag {
     width: 2.2rem;
     height: 1.4rem;
     object-fit: cover;
     border-radius: 0.2rem;
-    margin: 0 0.2rem 0.1rem 0;
+    margin: 0;
     border: 1px solid rgba(15, 23, 42, 0.12);
     vertical-align: middle;
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);

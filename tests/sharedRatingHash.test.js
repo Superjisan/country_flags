@@ -14,7 +14,7 @@ Deno.test('a hashchange into a rating url shows the shared summary, and clearing
   assertEquals(document.getElementById('answers-table').hidden, true);
   assertEquals(document.getElementById('study-controls').hidden, true);
   assertEquals(document.getElementById('rate-own-flag').hidden, false);
-  assertEquals(document.getElementById('page-title').textContent, 'Country Ratings');
+  assertEquals(document.getElementById('page-title').textContent, 'Country Flag Ratings');
   assertEquals(document.getElementById('intro').hidden, true);
   assertMatch(document.getElementById('feedback').innerHTML, /<img[^>]+src=/);
 

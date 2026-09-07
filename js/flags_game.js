@@ -13,6 +13,7 @@ export { getCorrectAnswer, getAliases, getRandomCountry, getState, normalizeName
 export { buildResultsEmojiGrid, buildShareText, shareScore, encodeRatingPayload, decodeRatingPayload, decodeRatingPayloadFromHash, buildRatingSummaryText, formatContinentLabel } from './share.js';
 
 const RATE_TIERS = ['S', 'A', 'B', 'C', 'D', 'F'];
+const TIER_EMOJIS = { S: '🔥', A: '⭐', B: '🥈', C: '😐', D: '🗑️', F: '💥' };
 const RATE_EMOJIS = {
   S: '🔥',
   A: '⭐',
@@ -178,15 +179,26 @@ export function recordRateTier(tier) {
   showRateCountry();
 }
 
+function buildRatingsTable(cellForTier) {
+  const rows = RATE_TIERS.map((tier) => `<tr><th scope="row">${tier}</th><td>${cellForTier(tier)}</td></tr>`);
+  return `<table class="ratings-table"><tbody>${rows.join('')}</tbody></table>`;
+}
+
+function buildFlagCell(ratedCountries) {
+  if (!ratedCountries.length) {
+    return '<div class="rated-flags rated-flags-empty">&mdash;</div>';
+  }
+  const flags = ratedCountries
+    .map((country) => `<img src="${flagUrl(country)}" alt="${country}" title="${country}" class="rated-flag" />`)
+    .join('');
+  return `<div class="rated-flags">${flags}</div>`;
+}
+
 export function buildRatingSummary() {
-  const lines = RATE_TIERS.map((tier) => {
-    const ratedCountries = rateHistory.filter((entry) => entry.tier === tier).map((entry) => entry.country);
-    const flags = ratedCountries.length
-      ? ratedCountries.map((country) => `<img src="${flagUrl(country)}" alt="${country}" title="${country}" class="rated-flag" />`).join('')
-      : '—';
-    return `${tier}: ${flags}`;
-  });
-  return `Your ratings<br>${lines.join('<br>')}`;
+  const table = buildRatingsTable((tier) => buildFlagCell(
+    rateHistory.filter((entry) => entry.tier === tier).map((entry) => entry.country)
+  ));
+  return `Your ratings${table}`;
 }
 
 export function getRatingCounts() {
@@ -207,23 +219,15 @@ export function applySharedRatingSummary() {
   isRateMode = false;
   showRatingsPageHeader();
   lockContinentButtonsTo(shared.continent || 'world');
-  const summaryHTML = (() => {
-    const lines = ['S', 'A', 'B', 'C', 'D', 'F'].map((tier) => {
-      let ratedCountries = [];
-      if (Array.isArray(shared[tier])) {
-        ratedCountries = shared[tier];
-      } else if (typeof shared[tier] === 'number') {
-        const count = shared[tier];
-        const icon = count > 0 ? (tier === 'S' ? '🔥' : tier === 'A' ? '⭐' : tier === 'B' ? '🥈' : tier === 'C' ? '😐' : tier === 'D' ? '🗑️' : '💥').repeat(count) : '—';
-        return `${tier}: ${count} ${icon}`;
-      }
-      const flags = ratedCountries.length
-        ? ratedCountries.map((country) => `<img src="${flagUrl(country)}" alt="${country}" title="${country}" class="rated-flag" />`).join('')
-        : '—';
-      return `${tier}: ${flags}`;
-    });
-    return `${formatContinentLabel(shared.continent || 'world')} flag ratings<br>${lines.join('<br>')}`;
-  })();
+  const table = buildRatingsTable((tier) => {
+    // Ratings shared before countries were encoded carry a count per tier.
+    if (typeof shared[tier] === 'number') {
+      const count = shared[tier];
+      return count > 0 ? `${count} ${TIER_EMOJIS[tier].repeat(count)}` : '&mdash;';
+    }
+    return buildFlagCell(Array.isArray(shared[tier]) ? shared[tier] : []);
+  });
+  const summaryHTML = `${formatContinentLabel(shared.continent || 'world')} flag ratings${table}`;
   
   ratingCounts = { S: shared.S?.length || 0, A: shared.A?.length || 0, B: shared.B?.length || 0, C: shared.C?.length || 0, D: shared.D?.length || 0, F: shared.F?.length || 0 };
   setFeedback(summaryHTML);
@@ -290,7 +294,7 @@ function showRatingsPageHeader() {
   if (gamePageTitle === null) {
     gamePageTitle = pageTitle.textContent;
   }
-  pageTitle.textContent = 'Country Ratings';
+  pageTitle.textContent = 'Country Flag Ratings';
   document.getElementById('intro').hidden = true;
 }
 

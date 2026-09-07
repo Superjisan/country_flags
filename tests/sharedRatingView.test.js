@@ -25,7 +25,7 @@ Deno.test('a shared rating url leaves only the summary and the create-your-own b
   });
   assertEquals(document.getElementById('share').hidden, true);
   assertEquals(document.getElementById('rate-own-flag').hidden, false);
-  assertEquals(document.getElementById('page-title').textContent, 'Country Ratings');
+  assertEquals(document.getElementById('page-title').textContent, 'Country Flag Ratings');
   assertEquals(document.getElementById('intro').hidden, true);
 
   assertEquals(document.getElementById('continent-buttons').hidden, false);
@@ -64,4 +64,33 @@ Deno.test('create your own rating switches to rate mode and drops the shared has
   assertEquals(document.getElementById('buttons-div').hidden, true);
   assertEquals(document.getElementById('answers-table').hidden, true);
   assert(document.getElementById('country-flag').src.length > 0);
+});
+
+Deno.test('the shared summary lays the ratings out as one row per tier', async () => {
+  setupDom();
+  window.location.hash = WORLD_RATING_HASH;
+  await importGame();
+
+  const rows = [...document.querySelectorAll('#feedback .ratings-table tbody tr')];
+  assertEquals(rows.map((row) => row.querySelector('th').textContent), ['S', 'A', 'B', 'C', 'D', 'F']);
+  assertEquals(rows[0].querySelectorAll('td .rated-flags img.rated-flag').length, 2);
+  assert(rows[1].querySelector('td .rated-flags-empty'), 'an unused tier still gets its own row');
+});
+
+Deno.test('the flag column wraps after five flags, with a divider between tiers', async () => {
+  const css = (await Deno.readTextFile(new URL('../styles.css', import.meta.url)))
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, selector, body]) => ({
+    selector: selector.trim(),
+    body: body.trim(),
+  }));
+
+  const flagColumn = rules.find((rule) => rule.selector === '.rated-flags');
+  assert(flagColumn, 'styles.css needs a .rated-flags rule');
+  assertMatch(flagColumn.body, /grid-template-columns:\s*repeat\(5,/);
+
+  const divider = rules.find((rule) =>
+    rule.selector.includes('.ratings-table tr + tr') && /border-top:/.test(rule.body)
+  );
+  assert(divider, 'each tier row needs a line separating it from the one above');
 });
