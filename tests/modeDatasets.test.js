@@ -1,6 +1,16 @@
 import { assertEquals } from 'jsr:@std/assert@1';
 import { MODE_DATASETS } from '../js/game_state.js';
 
+Deno.test('countries.json is readable and valid JSON', async () => {
+  const countriesText = await Deno.readTextFile(new URL('../data/countries.json', import.meta.url));
+  const countries = JSON.parse(countriesText);
+
+  assertEquals(typeof countries, 'object');
+  assertEquals(countries !== null, true);
+  assertEquals(Object.keys(countries).length > 0, true);
+  assertEquals(countries['Northern Ireland']?.flagSlug, 'northern-ireland');
+});
+
 Deno.test('Russia is playable in both Asia and Europe modes', () => {
   assertEquals(MODE_DATASETS.asia.includes('Russia'), true);
   assertEquals(MODE_DATASETS.europe.includes('Russia'), true);
@@ -11,11 +21,12 @@ Deno.test('Türkiye is only playable in Asia mode, not Europe', () => {
   assertEquals(MODE_DATASETS.europe.includes('Türkiye'), false);
 });
 
-Deno.test('countries with no continent are World-only', () => {
-  for (const country of ['England', 'Scotland', 'Wales', 'Northern Ireland']) {
+Deno.test('the UK constituent countries are included in Europe mode', () => {
+  for (const country of ['England', 'Northern Ireland', 'Scotland', 'Wales']) {
     assertEquals(MODE_DATASETS.world.includes(country), true, `${country} should be in World`);
+    assertEquals(MODE_DATASETS.europe.includes(country), true, `${country} should be in Europe`);
     for (const [mode, dataset] of Object.entries(MODE_DATASETS)) {
-      if (mode === 'world') {
+      if (mode === 'world' || mode === 'europe') {
         continue;
       }
       assertEquals(dataset.includes(country), false, `${country} should not be in ${mode}`);
