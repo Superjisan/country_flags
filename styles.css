@@ -36,6 +36,7 @@ p {
     display: inline-flex;
     width: 20rem;
     max-width: calc(100vw - 9rem);
+    flex: 0 0 auto;
 }
 
 .answer-suggestions {
@@ -148,15 +149,21 @@ p {
 
 #study-controls > button,
 .mode-toggle-btn {
-    height: 2rem;
+    height: 2.5rem;
     cursor: pointer;
+    border: none;
+    border-radius: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(20, 35, 90, 0.18);
 }
 
 #study-prev,
 #study-next {
-    width: 4.5rem;
+    width: 5rem;
     max-width: none;
-    flex: 0 0 4.5rem;
+    flex: 0 0 5rem;
+    color: white;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
 }
 
 .mode-toggle {
@@ -271,6 +278,16 @@ p {
     align-items: center;
     gap: 0.5rem;
     margin: 1rem auto;
+    flex-wrap: nowrap;
+}
+
+#input-div > #country {
+    min-width: 0;
+}
+
+#input-div[data-mode="study"] #answer-wrapper {
+    width: auto !important;
+    max-width: none !important;
 }
 
 #countries-list {
@@ -286,15 +303,16 @@ p {
 }
 
 #reveal-answer {
-    height: 2.1rem;
-    min-width: 2.5rem;
-    padding: 0 0.75rem;
+    height: 2.5rem;
+    min-width: 8.5rem;
+    padding: 0 1rem;
     cursor: pointer;
     background: linear-gradient(135deg, #fef3c7, #fcd34d);
     color: #1f2937;
     border: none;
-    border-radius: 0.75rem;
+    border-radius: 0.85rem;
     font-weight: 700;
+    box-shadow: 0 6px 14px rgba(20, 35, 90, 0.18);
 }
 
 #reveal-answer.revealed {

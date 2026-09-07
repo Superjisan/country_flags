@@ -196,9 +196,16 @@ export function syncActionButtons() {
   document.getElementById('skip').hidden = gameOver || !playView;
   replayButton.hidden = !gameOver || isStudyMode;
   replayButton.setAttribute('aria-hidden', String(replayButton.hidden));
+  const answerWrapper = document.getElementById('answer-wrapper');
+  const inputDiv = document.getElementById('input-div');
   document.getElementById('answer').disabled = gameOver || !playView;
   document.getElementById('answer').hidden = isStudyMode;
-  document.getElementById('input-div').hidden = false;
+  answerWrapper.hidden = isStudyMode;
+  answerWrapper.style.display = isStudyMode ? 'none' : '';
+  answerWrapper.style.width = isStudyMode ? 'auto' : '20rem';
+  answerWrapper.style.maxWidth = isStudyMode ? 'none' : 'calc(100vw - 9rem)';
+  inputDiv.dataset.mode = isStudyMode ? 'study' : 'play';
+  inputDiv.hidden = false;
   document.getElementById('reveal-answer').hidden = !isStudyMode;
   document.getElementById('score').hidden = isStudyMode;
   document.getElementById('study-controls').hidden = !isStudyMode;
