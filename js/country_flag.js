@@ -1,4 +1,4 @@
-import { getCountryIso, getFallbackFlagSlug } from './game_state.js';
+import { getCountryIso, getFallbackFlagSlug, getLocalFlagFile } from './game_state.js';
 
 function showFlag(src) {
   document.getElementById('country-flag').src = src;
@@ -12,6 +12,10 @@ function hideFlag() {
 }
 
 export function flagUrl(country) {
+  const localFile = getLocalFlagFile(country);
+  if (localFile) {
+    return localFile;
+  }
   const isoCode = getCountryIso(country);
   if (isoCode) {
     return `https://flagcdn.com/${isoCode}.svg`;

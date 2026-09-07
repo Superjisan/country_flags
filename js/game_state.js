@@ -77,6 +77,13 @@ export function getFallbackFlagSlug(country) {
   return countries[country]?.flagSlug ?? null;
 }
 
+// Countries whose flag no flag host serves correctly -- flagcdn and
+// worldflags.net both still publish the pre-2021 Afghanistan flag -- carry a
+// path to a copy committed under flags/ instead.
+export function getLocalFlagFile(country) {
+  return countries[country]?.flagFile ?? null;
+}
+
 export function getRandomCountry() {
   const randomIndex = Math.floor(Math.random() * countriesLeft.length);
   return countriesLeft[randomIndex];

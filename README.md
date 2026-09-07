@@ -33,7 +33,7 @@ This runs every file under [tests/](tests/) once, headless, with no browser requ
 
 ## Where the flag images come from
 
-Flags are loaded at runtime from [flagcdn.com](https://flagcdn.com) by ISO 3166-1 alpha-2 code.  A handful of countries with no code there (Kosovo, Palestine, Tuvalu, the Marshall Islands, Micronesia) fall back to `worldflags.net` via a `flagSlug` in the data file.  If an image fails to load, the round shows an "unavailable" note instead of a broken image, so the player can skip.
+Flags are loaded at runtime from [flagcdn.com](https://flagcdn.com) by ISO 3166-1 alpha-2 code.  A handful of countries with no code there (Kosovo, Palestine, Tuvalu, the Marshall Islands, Micronesia) fall back to `worldflags.net` via a `flagSlug` in the data file.  A `flagFile` path overrides both and serves a copy committed under `flags/`, for countries neither host gets right -- Afghanistan, where both still publish the pre-2021 flag.  If an image fails to load, the round shows an "unavailable" note instead of a broken image, so the player can skip.
 
 ## Deployment
 
