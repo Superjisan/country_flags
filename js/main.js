@@ -7,20 +7,52 @@ import {
   revealStudyCountry,
   moveStudyIndex,
 } from './flags_game.js';
-import { MODE_DATASETS } from './game_state.js';
+import { MODE_DATASETS, getCorrectAnswer } from './game_state.js';
 import { registerCountryFlagErrorHandler } from './country_flag.js';
 import { registerServiceWorker } from './pwa.js';
 import { shareScore } from './share.js';
+import { bindCountrySuggestions } from './datalist.js';
 
 export * from './flags_game.js';
 
 registerCountryFlagErrorHandler();
 initGame();
+bindCountrySuggestions();
 
-document.getElementById('answer').addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
+const answerInput = document.getElementById('answer');
+
+answerInput.addEventListener('input', () => {
+  const country = document.getElementById('country').innerText;
+  const value = answerInput.value.trim();
+
+  if (!country || !value) {
+    return;
+  }
+
+  if (getCorrectAnswer(country, value)) {
     checkAnswer();
   }
+});
+
+answerInput.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter') {
+    return;
+  }
+
+  const suggestions = document.getElementById('answer-suggestions');
+  if (suggestions && !suggestions.hidden) {
+    event.preventDefault();
+    const active = suggestions.querySelector('.country-suggestion.active');
+    const first = suggestions.querySelector('.country-suggestion');
+    const selected = active || first;
+    if (selected) {
+      answerInput.value = selected.textContent;
+      suggestions.hidden = true;
+      return;
+    }
+  }
+
+  checkAnswer();
 });
 document.getElementById('submit').addEventListener('click', () => checkAnswer());
 document.getElementById('skip').addEventListener('click', () => checkAnswer(true));

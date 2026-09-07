@@ -167,6 +167,22 @@ Deno.test('study mode reveals the country name only after the reveal action and 
   assertEquals(document.getElementById('score').hidden, false);
 });
 
+Deno.test('typing a full valid country name or alias auto-submits without a second Enter press', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('europe');
+
+  const answer = document.getElementById('answer');
+  const country = document.getElementById('country').innerText;
+  const typed = country === 'Netherlands' ? ' holland ' : country;
+
+  answer.value = typed;
+  answer.dispatchEvent(new Event('input', { bubbles: true }));
+
+  assertEquals(document.getElementById('score').innerText, 'Score: 1');
+  assertEquals(document.getElementById('answer').value, '');
+});
+
 Deno.test('study mode keeps the score hidden via the stylesheet', async () => {
   setupDom();
   const css = await Deno.readTextFile(new URL('../styles.css', import.meta.url));

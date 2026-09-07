@@ -41,7 +41,10 @@
             <p id="flag-missing" hidden>Flag image unavailable &mdash; skip to the next country.</p>
         </div>
         <div id="input-div">
-            <input list="countries-list" type="text" id="answer" placeholder="Enter the country" autocomplete="off">
+            <div id="answer-wrapper">
+                <input type="text" id="answer" placeholder="Enter the country" autocomplete="off">
+                <div id="answer-suggestions" class="answer-suggestions" hidden></div>
+            </div>
             <p id="country" hidden></p>
             <button id="reveal-answer" type="button" aria-label="Reveal country name" title="Reveal country name">👁️ Reveal</button>
             <datalist id="countries-list">

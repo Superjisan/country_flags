@@ -51,6 +51,42 @@ Deno.test('populateCountriesDatalist includes both the country name and accepted
   assertEquals(values.includes('Turkey'), true);
 });
 
+Deno.test('answer suggestions always filter below the input as the user types', async () => {
+  setupDom();
+  await importGame();
+  populateCountriesDatalist(['Australia', 'Austria', 'Brazil']);
+
+  const input = document.getElementById('answer');
+  const suggestions = document.getElementById('answer-suggestions');
+
+  input.value = 'Au';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+
+  assertEquals(suggestions.hidden, false);
+  const options = [...suggestions.querySelectorAll('button')].map((button) => button.textContent);
+  assertEquals(options.includes('Australia'), true);
+  assertEquals(options.includes('Austria'), true);
+  assertEquals(options.includes('Brazil'), false);
+});
+
+Deno.test('arrow keys and enter select the highlighted suggestion', async () => {
+  setupDom();
+  await importGame();
+  populateCountriesDatalist(['Australia', 'Austria', 'Brazil']);
+
+  const input = document.getElementById('answer');
+  input.value = 'Au';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+
+  const activeSuggestion = document.querySelector('.country-suggestion.active');
+  assertEquals(activeSuggestion?.textContent, 'Australia');
+
+  input.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assertEquals(input.value, 'Australia');
+  assertEquals(document.getElementById('answer-suggestions').hidden, true);
+});
+
 Deno.test('normalizeName folds away case, diacritics, punctuation and spacing', async () => {
   setupDom();
   const game = await importGame();
