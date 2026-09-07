@@ -116,7 +116,21 @@ Deno.test('playing a full continent tracks score/progress and reveals share only
   assertEquals(document.getElementById('score').innerText, `Score: ${OCEANIA_COUNT - 1}`);
   assertEquals(document.getElementById('share').hidden, false);
   assertEquals(document.querySelectorAll('#answers-body tr').length, OCEANIA_COUNT);
-  assertMatch(document.getElementById('feedback').innerText, /Game over/);
+  assertMatch(document.getElementById('feedback').innerText, /You got|PERFECT|Excellent work|Very strong|Solid effort|A rough round/);
+});
+
+Deno.test('game over hides the answer buttons and shows a replay button', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('oceania');
+
+  for (let i = 0; i < OCEANIA_COUNT; i++) {
+    answerCurrentCountry(game);
+  }
+
+  assertEquals(document.getElementById('submit').hidden, true);
+  assertEquals(document.getElementById('skip').hidden, true);
+  assertEquals(document.getElementById('replay').hidden, false);
 });
 
 Deno.test('answering past the end of a finished game changes nothing', async () => {

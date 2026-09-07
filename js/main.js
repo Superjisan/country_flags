@@ -16,6 +16,10 @@ document.getElementById('answer').addEventListener('keydown', (event) => {
 });
 document.getElementById('submit').addEventListener('click', () => checkAnswer());
 document.getElementById('skip').addEventListener('click', () => checkAnswer(true));
+document.getElementById('replay').addEventListener('click', () => {
+  const currentMode = document.querySelector('.continent-btn.active')?.id || 'world';
+  switchMode(currentMode);
+});
 document.getElementById('share').addEventListener('click', shareScore);
 
 // button listeners for continents

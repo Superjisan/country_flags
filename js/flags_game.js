@@ -47,11 +47,41 @@ export function checkAnswer(skipped = false) {
 }
 
 export function gameOverFeedback() {
-  const { score, numCountries } = getState();
-  const feedbackText = `Game over! You have played all countries for this setting. Your final score is ${score} out of ${numCountries}.`;
+  const { score, numCountries, currentMode } = getState();
+  const percent = numCountries ? Math.round((score / numCountries) * 100) : 0;
+  const activeContinentButton = document.querySelector('.continent-btn.active');
+  const modeName = activeContinentButton ? activeContinentButton.textContent.trim() : 'World';
+
+  let headline = 'A bit of studying and you’ll be back on track.';
+  let detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+
+  if (percent === 100) {
+    headline = currentMode === 'world'
+      ? 'PERFECT. You are a true GOAT of Country Flags.'
+      : `PERFECT. You know all the flags of ${modeName}.`;
+    detail = `You scored ${score} out of ${numCountries} (${percent}%) — flawless.`;
+  } else if (percent >= 90) {
+    headline = 'Excellent work — you’re basically a flag expert.';
+    detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+  } else if (percent >= 75) {
+    headline = 'Very strong performance — you’ve got serious flag instincts.';
+    detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+  } else if (percent >= 50) {
+    headline = 'Solid effort — you’re getting there.';
+    detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+  } else if (percent >= 25) {
+    headline = 'You’ve got room to grow, but the foundation is there.';
+    detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+  } else if (percent > 0) {
+    headline = 'A rough round, but a little study goes a long way.';
+    detail = `You got ${score} out of ${numCountries} right (${percent}%).`;
+  }
+
+  const feedbackText = `${headline} ${detail}`;
   setFeedback(feedbackText);
   document.getElementById('feedback').innerText = feedbackText;
   document.getElementById('share').hidden = false;
+  syncActionButtons();
   saveState();
 }
 
@@ -70,6 +100,14 @@ export function playGame() {
   return country;
 }
 
+export function syncActionButtons() {
+  const gameOver = isGameOver();
+  document.getElementById('submit').hidden = gameOver;
+  document.getElementById('skip').hidden = gameOver;
+  document.getElementById('replay').hidden = !gameOver;
+  document.getElementById('answer').disabled = gameOver;
+}
+
 export function resetGame(mode = 'world') {
   resetState(mode);
   const { score, countriesPlayed, numCountries } = getState();
@@ -79,6 +117,7 @@ export function resetGame(mode = 'world') {
   document.getElementById('share').hidden = true;
   document.getElementById('feedback').innerText = '';
   clearAnswersTable();
+  syncActionButtons();
   saveState();
 }
 
@@ -112,6 +151,7 @@ export function restoreState(state) {
   } else if (!currentCountry) {
     playGame();
   }
+  syncActionButtons();
 }
 
 export function switchMode(mode) {
