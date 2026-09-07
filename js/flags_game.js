@@ -208,6 +208,7 @@ export function syncActionButtons() {
   inputDiv.hidden = false;
   document.getElementById('reveal-answer').hidden = !isStudyMode;
   document.getElementById('score').hidden = isStudyMode;
+  document.getElementById('answers-table').hidden = isStudyMode;
   document.getElementById('study-controls').hidden = !isStudyMode;
   document.getElementById('study-prev').hidden = !isStudyMode;
   document.getElementById('study-next').hidden = !isStudyMode;

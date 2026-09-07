@@ -153,6 +153,7 @@ Deno.test('study mode reveals the country name only after the reveal action and 
   studyButton.click();
   assertEquals(document.getElementById('country').hidden, true);
   assertEquals(document.getElementById('score').hidden, true);
+  assertEquals(document.getElementById('answers-table').hidden, true);
 
   revealButton.click();
   assertEquals(document.getElementById('country').hidden, false);
@@ -165,6 +166,7 @@ Deno.test('study mode reveals the country name only after the reveal action and 
 
   document.getElementById('play-mode').click();
   assertEquals(document.getElementById('score').hidden, false);
+  assertEquals(document.getElementById('answers-table').hidden, false);
 });
 
 Deno.test('typing a full valid country name or alias auto-submits without a second Enter press', async () => {
