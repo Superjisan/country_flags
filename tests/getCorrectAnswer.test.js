@@ -33,6 +33,15 @@ Deno.test('getCorrectAnswer accepts a country\'s listed alternate names', async 
   assertEquals(game.getCorrectAnswer('Türkiye', 'Holland'), false);
 });
 
+Deno.test('getCorrectAnswer accepts Saint/St alias variants for Saint-named countries', async () => {
+  setupDom();
+  const game = await importGame();
+  assertEquals(game.getCorrectAnswer('Saint Kitts and Nevis', 'St Kitts and Nevis'), true);
+  assertEquals(game.getCorrectAnswer('Saint Kitts and Nevis', 'Saint Kitts & Nevis'), true);
+  assertEquals(game.getCorrectAnswer('Saint Lucia', 'St Lucia'), true);
+  assertEquals(game.getCorrectAnswer('Saint Vincent and the Grenadines', 'Saint Vincent & the Grenadines'), true);
+});
+
 Deno.test('populateCountriesDatalist includes both the country name and accepted aliases', () => {
   setupDom();
   populateCountriesDatalist(['Türkiye']);
