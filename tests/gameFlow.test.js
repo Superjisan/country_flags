@@ -119,6 +119,22 @@ Deno.test('playing a full continent tracks score/progress and reveals share only
   assertMatch(document.getElementById('feedback').innerText, /You got|PERFECT|Excellent work|Very strong|Solid effort|A rough round/);
 });
 
+Deno.test('game-over feedback breaks the result into headline, score and judgment lines', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('oceania');
+
+  for (let i = 0; i < OCEANIA_COUNT; i++) {
+    answerCurrentCountry(game);
+  }
+
+  const feedback = document.getElementById('feedback').innerText;
+  assertMatch(feedback, /PERFECT/);
+  assertMatch(feedback, /Score:\s+14\s*\/\s*14\s*\(100%\)/);
+  assertMatch(feedback, /💪 Absolute domination\./);
+  assertMatch(feedback, /\n/);
+});
+
 Deno.test('game over hides the answer buttons and shows a replay button', async () => {
   setupDom();
   const game = await importGame();
