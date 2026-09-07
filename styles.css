@@ -56,7 +56,8 @@
 
 #submit,
 #skip,
-#replay {
+#replay,
+#share {
     height: 2.25rem;
     color: white;
     width: 100%;
@@ -104,6 +105,12 @@
     #buttons-div > button {
         width: min(14rem, 50%);
         max-width: 14rem;
+    }
+
+    #buttons-div > button#replay {
+        width: 20rem;
+        max-width: calc(100vw - 9rem);
+        margin: 0 auto;
     }
 }
 
@@ -294,14 +301,21 @@
 
 #share {
     display: block;
-    width: 100%;
-    max-width: none;
-    height: 2rem;
+    width: 20rem;
+    max-width: calc(100vw - 9rem);
+    height: 2.25rem;
     margin: 1rem auto;
     padding: 0 1.5rem;
     color: white;
-    background-color: green;
+    background: linear-gradient(135deg, #67e8f9, #22d3ee, #0891b2);
     cursor: pointer;
+}
+
+#replay {
+    display: block;
+    width: 20rem;
+    max-width: calc(100vw - 9rem);
+    margin: 1rem auto;
 }
 
 #share[hidden] {
