@@ -135,6 +135,58 @@ Deno.test('game-over feedback breaks the result into headline, score and judgmen
   assertMatch(feedback, /\n/);
 });
 
+Deno.test('rate mode exposes tier buttons and summarizes ratings at the end', async () => {
+  setupDom();
+  const game = await importGame();
+  game.switchMode('oceania');
+
+  const rateButton = document.getElementById('rate-mode');
+  assertEquals(rateButton !== null, true);
+
+  rateButton.click();
+  assertEquals(document.getElementById('answer').hidden, true);
+  assertEquals(document.getElementById('rating-buttons').hidden, false);
+  assertEquals(document.getElementById('share').hidden, true);
+
+  const sButton = document.querySelector('[data-tier="S"]');
+  assertEquals(sButton !== null, true);
+  sButton.click();
+
+  assertEquals(String(document.getElementById('progress-value').innerText), '1');
+  assertEquals(document.getElementById('feedback').textContent.includes('S'), true);
+  assertEquals(document.getElementById('feedback').querySelector('img') !== null, true);
+
+  for (let i = 1; i < OCEANIA_COUNT; i++) {
+    const nextTier = document.querySelector('[data-tier="A"]') || document.querySelector('[data-tier="B"]');
+    nextTier.click();
+  }
+
+  assertEquals(document.getElementById('share').hidden, false);
+  assertEquals(document.getElementById('share').innerText.includes('Share Your Rating'), true);
+  assertMatch(document.getElementById('feedback').textContent, /S/);
+  assertMatch(document.getElementById('feedback').innerHTML, /<img[^>]+src=/);
+});
+
+Deno.test('encoded rating URLs round-trip and offer a way to start rating again', async () => {
+  setupDom();
+  const game = await importGame();
+
+  const payload = { S: 2, A: 3, B: 1, C: 0, D: 0, F: 0 };
+  const encoded = game.encodeRatingPayload(payload);
+  const decoded = game.decodeRatingPayload(encoded);
+  assertEquals(decoded, payload);
+
+  window.location.hash = `#continent=europe&ratings=${encoded}`;
+  const summary = game.decodeRatingPayloadFromHash();
+  assertEquals(summary.S, 2);
+  assertEquals(summary.A, 3);
+  assertEquals(summary.continent, 'europe');
+
+  assertEquals(document.getElementById('rate-own-flag') !== null, true);
+  assertEquals(document.getElementById('mode-toggle').hidden, true);
+  assertEquals(document.getElementById('rate-own-flag').textContent.includes('Create your own Europe flag rating'), true);
+});
+
 Deno.test('study mode reveals the country name only after the reveal action and keeps a slideshow index', async () => {
   setupDom();
   const game = await importGame();

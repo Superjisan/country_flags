@@ -70,9 +70,20 @@
             Progress: <span id="progress-value">0</span> / <span id="total-countries">0</span>
         </p>
         <button id="share" hidden>📤 Share Score</button>
+        <button id="rate-own-flag" type="button" hidden>Create your own flag rating</button>
         <div id="mode-toggle" class="mode-toggle">
             <button id="play-mode" class="mode-toggle-btn active" type="button">🎮 Play</button>
             <button id="study-mode" class="mode-toggle-btn" type="button">📚 Study</button>
+            <button id="rate-mode" class="mode-toggle-btn" type="button">🔥 Rate Flags</button>
+        </div>
+
+        <div id="rating-buttons" class="rating-buttons" hidden>
+            <button class="rating-tier" data-tier="S" type="button">S 🔥</button>
+            <button class="rating-tier" data-tier="A" type="button">A ⭐</button>
+            <button class="rating-tier" data-tier="B" type="button">B 🥈</button>
+            <button class="rating-tier" data-tier="C" type="button">C 😐</button>
+            <button class="rating-tier" data-tier="D" type="button">D 🗑️</button>
+            <button class="rating-tier" data-tier="F" type="button">F 💥</button>
         </div>
 
         <!-- Table containing all answers -->

@@ -7,12 +7,26 @@ import { updateCountryFlag, flagUrl } from './country_flag.js';
 import { buildAnswerRow, clearAnswersTable } from './answers_table.js';
 import { populateCountriesDatalist } from './datalist.js';
 import { saveGameMode, loadGameMode } from './persistence.js';
+import { buildRatingSummaryText, decodeRatingPayloadFromHash, encodeRatingPayload, formatContinentLabel } from './share.js';
 
 export { getCorrectAnswer, getAliases, getRandomCountry, getState, normalizeName, matchKey, updateCountryFlag, flagUrl };
-export { buildResultsEmojiGrid, buildShareText, shareScore } from './share.js';
+export { buildResultsEmojiGrid, buildShareText, shareScore, encodeRatingPayload, decodeRatingPayload, decodeRatingPayloadFromHash, buildRatingSummaryText, formatContinentLabel } from './share.js';
+
+const RATE_TIERS = ['S', 'A', 'B', 'C', 'D', 'F'];
+const RATE_EMOJIS = {
+  S: '🔥',
+  A: '⭐',
+  B: '🥈',
+  C: '😐',
+  D: '🗑️',
+  F: '💥',
+};
 
 let isStudyMode = false;
+let isRateMode = false;
 let studyIndex = 0;
+let rateHistory = [];
+let ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
 
 populateCountriesDatalist(getCountryNames());
 
@@ -22,11 +36,14 @@ export function addCountryAnswerToHTML(country, answer) {
 
 export function setStudyMode(enabled) {
   isStudyMode = enabled;
+  isRateMode = false;
   saveGameMode(enabled ? 'study' : 'play');
   const playButton = document.getElementById('play-mode');
   const studyButton = document.getElementById('study-mode');
+  const rateButton = document.getElementById('rate-mode');
   playButton?.classList.toggle('active', !enabled);
   studyButton?.classList.toggle('active', enabled);
+  rateButton?.classList.toggle('active', false);
   if (enabled) {
     resetGame(getState().currentMode || 'world');
     document.getElementById('score').hidden = true;
@@ -86,6 +103,168 @@ export function showStudyCountry() {
   document.getElementById('total-countries').innerText = String(countries.length);
   updateCountryFlag(country);
   saveState();
+}
+
+export function setRateMode(enabled) {
+  isRateMode = enabled;
+  isStudyMode = false;
+  saveGameMode(enabled ? 'rate' : 'play');
+  const playButton = document.getElementById('play-mode');
+  const studyButton = document.getElementById('study-mode');
+  const rateButton = document.getElementById('rate-mode');
+  playButton?.classList.toggle('active', !enabled);
+  studyButton?.classList.toggle('active', false);
+  rateButton?.classList.toggle('active', enabled);
+  document.getElementById('rate-own-flag')?.setAttribute('hidden', 'hidden');
+
+  if (enabled) {
+    rateHistory = [];
+    ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
+    resetGame(getState().currentMode || 'world');
+    showRateCountry();
+  } else {
+    document.getElementById('country').hidden = true;
+    resetGame(getState().currentMode || 'world');
+    document.getElementById('score').hidden = false;
+    playGame();
+  }
+  syncActionButtons();
+}
+
+export function showRateCountry() {
+  const mode = getState().currentMode || 'world';
+  const countries = MODE_DATASETS[mode] ?? MODE_DATASETS.world;
+  if (!countries.length) {
+    return;
+  }
+  const nextCountry = countries.find((country) => !rateHistory.some((entry) => entry.country === country));
+  if (!nextCountry) {
+    showRateSummary();
+    return;
+  }
+  setCurrentCountry(nextCountry);
+  document.getElementById('country').innerText = nextCountry;
+  document.getElementById('country').hidden = true;
+  document.getElementById('progress-value').innerText = String(rateHistory.length);
+  document.getElementById('total-countries').innerText = String(countries.length);
+  updateCountryFlag(nextCountry);
+}
+
+export function recordRateTier(tier) {
+  if (!isRateMode) {
+    return;
+  }
+  const country = document.getElementById('country').innerText;
+  if (!country || rateHistory.some((entry) => entry.country === country)) {
+    return;
+  }
+
+  rateHistory.push({ country, tier });
+  ratingCounts[tier] = (ratingCounts[tier] ?? 0) + 1;
+  document.getElementById('progress-value').innerText = String(rateHistory.length);
+
+  const summary = buildRatingSummary();
+  setFeedback(summary);
+  document.getElementById('feedback').innerHTML = summary;
+
+  const mode = getState().currentMode || 'world';
+  if (rateHistory.length >= (MODE_DATASETS[mode]?.length ?? 0)) {
+    showRateSummary();
+    return;
+  }
+
+  showRateCountry();
+}
+
+export function buildRatingSummary() {
+  const lines = RATE_TIERS.map((tier) => {
+    const ratedCountries = rateHistory.filter((entry) => entry.tier === tier).map((entry) => entry.country);
+    const flags = ratedCountries.length
+      ? ratedCountries.map((country) => `<img src="${flagUrl(country)}" alt="${country}" title="${country}" class="rated-flag" />`).join('')
+      : '—';
+    return `${tier}: ${flags}`;
+  });
+  return `Your ratings<br>${lines.join('<br>')}`;
+}
+
+export function getRatingCounts() {
+  return { ...ratingCounts };
+}
+
+export function getRateHistory() {
+  return [...rateHistory];
+}
+
+export function applySharedRatingSummary() {
+  const shared = decodeRatingPayloadFromHash();
+  if (!shared) {
+    return false;
+  }
+  const summaryHTML = (() => {
+    const lines = ['S', 'A', 'B', 'C', 'D', 'F'].map((tier) => {
+      let ratedCountries = [];
+      if (Array.isArray(shared[tier])) {
+        ratedCountries = shared[tier];
+      } else if (typeof shared[tier] === 'number') {
+        const count = shared[tier];
+        const icon = count > 0 ? (tier === 'S' ? '🔥' : tier === 'A' ? '⭐' : tier === 'B' ? '🥈' : tier === 'C' ? '😐' : tier === 'D' ? '🗑️' : '💥').repeat(count) : '—';
+        return `${tier}: ${count} ${icon}`;
+      }
+      const flags = ratedCountries.length
+        ? ratedCountries.map((country) => `<img src="${flagUrl(country)}" alt="${country}" title="${country}" class="rated-flag" />`).join('')
+        : '—';
+      return `${tier}: ${flags}`;
+    });
+    return `${formatContinentLabel(shared.continent || 'world')} flag ratings<br>${lines.join('<br>')}`;
+  })();
+  
+  ratingCounts = { S: shared.S?.length || 0, A: shared.A?.length || 0, B: shared.B?.length || 0, C: shared.C?.length || 0, D: shared.D?.length || 0, F: shared.F?.length || 0 };
+  setFeedback(summaryHTML);
+  document.getElementById('feedback').innerHTML = summaryHTML;
+  document.getElementById('share').hidden = true;
+  document.getElementById('share').dataset.mode = 'rate';
+  document.getElementById('rate-own-flag').hidden = false;
+  document.getElementById('rate-own-flag').textContent = `Create your own ${formatContinentLabel(shared.continent || 'world')} flag rating`;
+  document.getElementById('rate-own-flag').onclick = () => {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    document.getElementById('mode-toggle').hidden = false;
+    document.getElementById('continent-buttons').hidden = false;
+    document.getElementById('flag-container').hidden = false;
+    document.getElementById('input-div').hidden = false;
+    document.getElementById('buttons-div').hidden = false;
+    document.getElementById('score').hidden = false;
+    document.getElementById('progress').hidden = false;
+    document.getElementById('rate-own-flag').hidden = true;
+    const continent = shared.continent || 'world';
+    removeActiveClassFromContinentButtons();
+    const continentButton = document.getElementById(continent);
+    if (continentButton) {
+      continentButton.classList.add('active');
+    }
+    switchMode(continent);
+    setRateMode(true);
+  };
+
+  document.getElementById('mode-toggle').hidden = true;
+  document.getElementById('continent-buttons').hidden = true;
+  document.getElementById('flag-container').hidden = true;
+  document.getElementById('input-div').hidden = true;
+  document.getElementById('buttons-div').hidden = true;
+  document.getElementById('score').hidden = true;
+  document.getElementById('progress').hidden = true;
+  document.getElementById('rating-buttons').hidden = true;
+  return true;
+}
+
+export function showRateSummary() {
+  const summary = buildRatingSummary();
+  setFeedback(summary);
+  document.getElementById('feedback').innerHTML = summary;
+  const shareButton = document.getElementById('share');
+  shareButton.hidden = false;
+  shareButton.dataset.mode = 'rate';
+  shareButton.innerText = '📤 Share Your Rating';
+  syncActionButtons();
 }
 
 export function checkAnswer(skipped = false) {
@@ -188,40 +367,51 @@ export function playGame() {
 
 export function syncActionButtons() {
   const gameOver = isGameOver();
-  const playView = !isStudyMode;
+  const rateComplete = isRateMode && rateHistory.length >= (MODE_DATASETS[getState().currentMode || 'world']?.length ?? 0);
+  const playView = !isStudyMode && !isRateMode;
   const replayButton = document.getElementById('replay');
 
-  document.getElementById('buttons-div').hidden = isStudyMode;
+  document.getElementById('buttons-div').hidden = isStudyMode || isRateMode;
   document.getElementById('submit').hidden = gameOver || !playView;
   document.getElementById('skip').hidden = gameOver || !playView;
-  replayButton.hidden = !gameOver || isStudyMode;
+  replayButton.hidden = !gameOver || isStudyMode || isRateMode;
   replayButton.setAttribute('aria-hidden', String(replayButton.hidden));
   const answerWrapper = document.getElementById('answer-wrapper');
   const inputDiv = document.getElementById('input-div');
   document.getElementById('answer').disabled = gameOver || !playView;
-  document.getElementById('answer').hidden = isStudyMode;
-  answerWrapper.hidden = isStudyMode;
-  answerWrapper.style.display = isStudyMode ? 'none' : '';
-  answerWrapper.style.width = isStudyMode ? 'auto' : '20rem';
-  answerWrapper.style.maxWidth = isStudyMode ? 'none' : 'calc(100vw - 9rem)';
-  inputDiv.dataset.mode = isStudyMode ? 'study' : 'play';
+  document.getElementById('answer').hidden = isStudyMode || isRateMode;
+  answerWrapper.hidden = isStudyMode || isRateMode;
+  answerWrapper.style.display = isStudyMode || isRateMode ? 'none' : '';
+  answerWrapper.style.width = isStudyMode || isRateMode ? 'auto' : '20rem';
+  answerWrapper.style.maxWidth = isStudyMode || isRateMode ? 'none' : 'calc(100vw - 9rem)';
+  inputDiv.dataset.mode = isStudyMode ? 'study' : isRateMode ? 'rate' : 'play';
   inputDiv.hidden = false;
   document.getElementById('reveal-answer').hidden = !isStudyMode;
-  document.getElementById('score').hidden = isStudyMode;
-  document.getElementById('answers-table').hidden = isStudyMode;
+  document.getElementById('score').hidden = isStudyMode || isRateMode;
+  document.getElementById('answers-table').hidden = isStudyMode || isRateMode;
   document.getElementById('study-controls').hidden = !isStudyMode;
   document.getElementById('study-prev').hidden = !isStudyMode;
   document.getElementById('study-next').hidden = !isStudyMode;
-  document.getElementById('share').hidden = !gameOver || isStudyMode;
+  document.getElementById('rating-buttons').hidden = !isRateMode;
+  document.getElementById('share').hidden = !(gameOver || rateComplete) || isStudyMode;
+  document.getElementById('share').dataset.mode = isRateMode ? 'rate' : 'play';
+  if (isRateMode && !rateComplete) {
+    document.getElementById('share').innerText = '📤 Share Your Rating';
+  }
+  document.getElementById('rate-own-flag').hidden = !decodeRatingPayloadFromHash();
 }
 
 export function resetGame(mode = 'world') {
   resetState(mode);
+  rateHistory = [];
+  ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
   const { score, countriesPlayed, numCountries } = getState();
   document.getElementById('score').innerText = `Score: ${score}`;
   document.getElementById('progress-value').innerText = countriesPlayed.length;
   document.getElementById('total-countries').innerText = numCountries;
   document.getElementById('share').hidden = true;
+  document.getElementById('share').dataset.mode = 'play';
+  document.getElementById('share').innerText = '📤 Share Score';
   document.getElementById('replay').hidden = true;
   document.getElementById('feedback').innerText = '';
   document.getElementById('country').hidden = true;
@@ -270,6 +460,8 @@ export function switchMode(mode) {
   if (isStudyMode) {
     studyIndex = 0;
     showStudyCountry();
+  } else if (isRateMode) {
+    showRateCountry();
   } else {
     playGame();
   }
@@ -278,10 +470,12 @@ export function switchMode(mode) {
 export function initGame() {
   const savedState = loadState();
   const savedMode = loadGameMode();
-  const initialMode = savedMode === 'study' ? 'study' : 'play';
+  const initialMode = savedMode === 'study' ? 'study' : savedMode === 'rate' ? 'rate' : 'play';
   const uiMode = initialMode === 'study';
+  const rateMode = initialMode === 'rate';
 
   isStudyMode = uiMode;
+  isRateMode = rateMode;
   if (savedState) {
     restoreState(savedState);
   } else {
@@ -290,9 +484,21 @@ export function initGame() {
 
   const playButton = document.getElementById('play-mode');
   const studyButton = document.getElementById('study-mode');
-  if (playButton && studyButton) {
-    playButton.classList.toggle('active', !uiMode);
+  const rateButton = document.getElementById('rate-mode');
+  if (playButton && studyButton && rateButton) {
+    playButton.classList.toggle('active', !uiMode && !rateMode);
     studyButton.classList.toggle('active', uiMode);
+    rateButton.classList.toggle('active', rateMode);
+  }
+  if (rateMode) {
+    rateHistory = [];
+    ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
+    showRateCountry();
+  }
+  if (applySharedRatingSummary()) {
+    isRateMode = false;
+    isStudyMode = false;
+    return;
   }
   syncActionButtons();
 }
