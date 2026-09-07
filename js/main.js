@@ -8,6 +8,7 @@ import {
   moveStudyIndex,
   recordRateTier,
   applySharedRatingSummary,
+  exitSharedRatingSummary,
 } from './flags_game.js';
 import { MODE_DATASETS, getCorrectAnswer } from './game_state.js';
 import { registerCountryFlagErrorHandler } from './country_flag.js';
@@ -76,8 +77,8 @@ document.getElementById('study-prev').addEventListener('click', () => moveStudyI
 document.getElementById('study-next').addEventListener('click', () => moveStudyIndex(1));
 document.getElementById('reveal-answer').addEventListener('click', () => revealStudyCountry());
 window.addEventListener('hashchange', () => {
-  if (window.location.hash.includes('ratings=')) {
-    applySharedRatingSummary();
+  if (!applySharedRatingSummary()) {
+    exitSharedRatingSummary();
   }
 });
 document.querySelectorAll('.rating-tier').forEach((button) => {

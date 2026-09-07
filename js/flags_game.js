@@ -24,6 +24,7 @@ const RATE_EMOJIS = {
 
 let isStudyMode = false;
 let isRateMode = false;
+let isSharedSummaryView = false;
 let studyIndex = 0;
 let rateHistory = [];
 let ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
@@ -200,6 +201,9 @@ export function applySharedRatingSummary() {
   if (!shared) {
     return false;
   }
+  isSharedSummaryView = true;
+  isStudyMode = false;
+  isRateMode = false;
   const summaryHTML = (() => {
     const lines = ['S', 'A', 'B', 'C', 'D', 'F'].map((tier) => {
       let ratedCountries = [];
@@ -227,6 +231,7 @@ export function applySharedRatingSummary() {
   document.getElementById('rate-own-flag').textContent = `Create your own ${formatContinentLabel(shared.continent || 'world')} flag rating`;
   document.getElementById('rate-own-flag').onclick = () => {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    isSharedSummaryView = false;
     document.getElementById('mode-toggle').hidden = false;
     document.getElementById('continent-buttons').hidden = false;
     document.getElementById('flag-container').hidden = false;
@@ -253,6 +258,26 @@ export function applySharedRatingSummary() {
   document.getElementById('score').hidden = true;
   document.getElementById('progress').hidden = true;
   document.getElementById('rating-buttons').hidden = true;
+  document.getElementById('answers-table').hidden = true;
+  document.getElementById('study-controls').hidden = true;
+  document.getElementById('study-prev').hidden = true;
+  document.getElementById('study-next').hidden = true;
+  return true;
+}
+
+export function exitSharedRatingSummary() {
+  if (!isSharedSummaryView) {
+    return false;
+  }
+  isSharedSummaryView = false;
+  document.getElementById('mode-toggle').hidden = false;
+  document.getElementById('continent-buttons').hidden = false;
+  document.getElementById('flag-container').hidden = false;
+  document.getElementById('progress').hidden = false;
+  document.getElementById('rate-own-flag').hidden = true;
+  setFeedback('');
+  document.getElementById('feedback').innerHTML = '';
+  syncActionButtons();
   return true;
 }
 
