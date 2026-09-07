@@ -1,4 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert@1';
+import { populateCountriesDatalist } from '../js/datalist.js';
 import { setupDom, importGame } from './support/env.js';
 
 Deno.test('getCorrectAnswer matches the country name case-insensitively', async () => {
@@ -22,6 +23,7 @@ Deno.test('getCorrectAnswer accepts a country\'s listed alternate names', async 
   setupDom();
   const game = await importGame();
   assertEquals(game.getCorrectAnswer('Türkiye', 'Turkey'), true);
+  assertEquals(game.getCorrectAnswer('Liechtenstein', 'Lichtenstein'), true);
   assertEquals(game.getCorrectAnswer('Netherlands', 'Holland'), true);
   assertEquals(game.getCorrectAnswer('United States', 'USA'), true);
   assertEquals(game.getCorrectAnswer('United Kingdom', 'Great Britain'), true);
@@ -29,6 +31,15 @@ Deno.test('getCorrectAnswer accepts a country\'s listed alternate names', async 
   assertEquals(game.getCorrectAnswer('Czechia', 'Czech Republic'), true);
   // an alias belonging to a different country is still wrong
   assertEquals(game.getCorrectAnswer('Türkiye', 'Holland'), false);
+});
+
+Deno.test('populateCountriesDatalist includes both the country name and accepted aliases', () => {
+  setupDom();
+  populateCountriesDatalist(['Türkiye']);
+
+  const values = [...document.querySelectorAll('#countries-list option')].map((option) => option.value);
+  assertEquals(values.includes('Türkiye'), true);
+  assertEquals(values.includes('Turkey'), true);
 });
 
 Deno.test('normalizeName folds away case, diacritics, punctuation and spacing', async () => {

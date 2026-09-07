@@ -665,6 +665,9 @@
         "iso": "ly"
     },
     "Liechtenstein": {
+        "aliases": [
+            "Lichtenstein"
+        ],
         "continents": [
             "europe"
         ],
