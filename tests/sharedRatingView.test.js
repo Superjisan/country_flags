@@ -2,7 +2,6 @@ import { assert, assertEquals, assertMatch } from 'jsr:@std/assert@1';
 import { setupDom, importGame } from './support/env.js';
 
 const HIDDEN_IN_SHARED_VIEW = [
-  'continent-buttons',
   'flag-container',
   'input-div',
   'buttons-div',
@@ -26,6 +25,19 @@ Deno.test('a shared rating url leaves only the summary and the create-your-own b
   });
   assertEquals(document.getElementById('share').hidden, true);
   assertEquals(document.getElementById('rate-own-flag').hidden, false);
+  assertEquals(document.getElementById('page-title').textContent, 'Country Ratings');
+  assertEquals(document.getElementById('intro').hidden, true);
+
+  assertEquals(document.getElementById('continent-buttons').hidden, false);
+  assertEquals(document.getElementById('world').disabled, false);
+  assertEquals(document.getElementById('world').classList.contains('active'), true);
+  const lockedOut = [...document.querySelectorAll('.continent-btn')]
+    .filter((button) => !button.disabled)
+    .map((button) => button.id);
+  assertEquals(lockedOut, ['world']);
+
+  document.getElementById('world').click();
+  assertEquals(document.getElementById('flag-container').hidden, true, 'the shared view survives a click on its own continent');
   assertMatch(document.getElementById('feedback').innerHTML, /World flag ratings/);
 });
 
@@ -42,10 +54,13 @@ Deno.test('create your own rating switches to rate mode and drops the shared has
   assertEquals(document.getElementById('study-mode').classList.contains('active'), false);
 
   assertEquals(document.getElementById('rate-own-flag').hidden, true);
+  assertEquals(document.getElementById('page-title').textContent, 'Country Flags Game');
+  assertEquals(document.getElementById('intro').hidden, false);
   assertEquals(document.getElementById('mode-toggle').hidden, false);
   assertEquals(document.getElementById('continent-buttons').hidden, false);
   assertEquals(document.getElementById('flag-container').hidden, false);
   assertEquals(document.getElementById('rating-buttons').hidden, false);
+  assertEquals([...document.querySelectorAll('.continent-btn')].every((button) => !button.disabled), true);
   assertEquals(document.getElementById('buttons-div').hidden, true);
   assertEquals(document.getElementById('answers-table').hidden, true);
   assert(document.getElementById('country-flag').src.length > 0);

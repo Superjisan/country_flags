@@ -14,6 +14,8 @@ Deno.test('a hashchange into a rating url shows the shared summary, and clearing
   assertEquals(document.getElementById('answers-table').hidden, true);
   assertEquals(document.getElementById('study-controls').hidden, true);
   assertEquals(document.getElementById('rate-own-flag').hidden, false);
+  assertEquals(document.getElementById('page-title').textContent, 'Country Ratings');
+  assertEquals(document.getElementById('intro').hidden, true);
   assertMatch(document.getElementById('feedback').innerHTML, /<img[^>]+src=/);
 
   window.location.hash = '';
@@ -22,6 +24,8 @@ Deno.test('a hashchange into a rating url shows the shared summary, and clearing
   assertEquals(document.getElementById('mode-toggle').hidden, false);
   assertEquals(document.getElementById('continent-buttons').hidden, false);
   assertEquals(document.getElementById('rate-own-flag').hidden, true);
+  assertEquals(document.getElementById('page-title').textContent, 'Country Flags Game');
+  assertEquals(document.getElementById('intro').hidden, false);
   assertEquals(document.getElementById('answers-table').hidden, false);
   assertEquals(document.getElementById('feedback').innerHTML, '');
 });

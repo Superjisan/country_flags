@@ -256,6 +256,18 @@ p {
     box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
 }
 
+.continent-btn:disabled {
+    opacity: 0.45;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.continent-btn:disabled:hover,
+.continent-btn:disabled:focus {
+    transform: none;
+    box-shadow: none;
+}
+
 #country[hidden],
 #score[hidden],
 #progress[hidden] {

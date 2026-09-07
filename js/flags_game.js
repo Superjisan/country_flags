@@ -25,6 +25,7 @@ const RATE_EMOJIS = {
 let isStudyMode = false;
 let isRateMode = false;
 let isSharedSummaryView = false;
+let gamePageTitle = null;
 let studyIndex = 0;
 let rateHistory = [];
 let ratingCounts = Object.fromEntries(RATE_TIERS.map((tier) => [tier, 0]));
@@ -204,6 +205,8 @@ export function applySharedRatingSummary() {
   isSharedSummaryView = true;
   isStudyMode = false;
   isRateMode = false;
+  showRatingsPageHeader();
+  lockContinentButtonsTo(shared.continent || 'world');
   const summaryHTML = (() => {
     const lines = ['S', 'A', 'B', 'C', 'D', 'F'].map((tier) => {
       let ratedCountries = [];
@@ -232,6 +235,8 @@ export function applySharedRatingSummary() {
   document.getElementById('rate-own-flag').onclick = () => {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
     isSharedSummaryView = false;
+    showGamePageHeader();
+    unlockContinentButtons();
     document.getElementById('mode-toggle').hidden = false;
     document.getElementById('continent-buttons').hidden = false;
     document.getElementById('flag-container').hidden = false;
@@ -251,7 +256,6 @@ export function applySharedRatingSummary() {
   };
 
   document.getElementById('mode-toggle').hidden = true;
-  document.getElementById('continent-buttons').hidden = true;
   document.getElementById('flag-container').hidden = true;
   document.getElementById('input-div').hidden = true;
   document.getElementById('buttons-div').hidden = true;
@@ -265,11 +269,45 @@ export function applySharedRatingSummary() {
   return true;
 }
 
+// The shared view keeps the continent buttons on screen so the reader can see
+// which set of flags they are looking at, but only that continent stays live.
+function lockContinentButtonsTo(continent) {
+  removeActiveClassFromContinentButtons();
+  document.getElementById(continent)?.classList.add('active');
+  document.querySelectorAll('.continent-btn').forEach((button) => {
+    button.disabled = button.id !== continent;
+  });
+}
+
+function unlockContinentButtons() {
+  document.querySelectorAll('.continent-btn').forEach((button) => {
+    button.disabled = false;
+  });
+}
+
+function showRatingsPageHeader() {
+  const pageTitle = document.getElementById('page-title');
+  if (gamePageTitle === null) {
+    gamePageTitle = pageTitle.textContent;
+  }
+  pageTitle.textContent = 'Country Ratings';
+  document.getElementById('intro').hidden = true;
+}
+
+function showGamePageHeader() {
+  if (gamePageTitle !== null) {
+    document.getElementById('page-title').textContent = gamePageTitle;
+  }
+  document.getElementById('intro').hidden = false;
+}
+
 export function exitSharedRatingSummary() {
   if (!isSharedSummaryView) {
     return false;
   }
   isSharedSummaryView = false;
+  showGamePageHeader();
+  unlockContinentButtons();
   document.getElementById('mode-toggle').hidden = false;
   document.getElementById('continent-buttons').hidden = false;
   document.getElementById('flag-container').hidden = false;
@@ -479,6 +517,9 @@ export function restoreState(state) {
 }
 
 export function switchMode(mode) {
+  if (isSharedSummaryView) {
+    return;
+  }
   resetGame(mode);
   removeActiveClassFromContinentButtons();
   document.getElementById(mode).classList.add('active');
@@ -493,6 +534,7 @@ export function switchMode(mode) {
 }
 
 export function initGame() {
+  isSharedSummaryView = false;
   const savedState = loadState();
   const savedMode = loadGameMode();
   const initialMode = savedMode === 'study' ? 'study' : savedMode === 'rate' ? 'rate' : 'play';
