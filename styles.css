@@ -1,3 +1,26 @@
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+h1 {
+    margin: 1.25rem 0 0.75rem;
+    text-align: center;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #172554;
+}
+
+p {
+    margin: 0.5rem auto;
+    text-align: center;
+    max-width: 42rem;
+    color: #334155;
+    font-size: 1rem;
+}
+
 #answer {
     width: 20rem;
     max-width: calc(100vw - 9rem);
@@ -167,7 +190,35 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 1rem 0;
+    gap: 0.5rem;
+    margin: 1rem 0 1.25rem;
+}
+
+.continent-btn {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: #1f2937;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 0.85rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.continent-btn:hover,
+.continent-btn:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+}
+
+.continent-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border-color: rgba(37, 99, 235, 0.35);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
 }
 
 #country[hidden],
@@ -179,20 +230,29 @@
 #flag-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     min-height: 12rem;
-    margin: 1rem 0;
+    margin: 0 auto;
+    padding: 0;
+    width: min(100%, 20rem);
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 1.1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 22px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
 }
 
 /* The flag is the whole question here, so it gets far more room than the
    thumbnail-sized hint flag in the capitals game. */
 #country-flag {
-    width: min(90vw, 20rem);
+    width: 100%;
     height: auto;
-    max-height: 13rem;
     object-fit: contain;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    margin: 0;
 }
 
 #country-flag[hidden], #flag-missing[hidden] {
@@ -261,18 +321,6 @@
     height: 2rem;
     object-fit: contain;
     display: block;
-}
-
-.continent-btn {
-    margin: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.continent-btn.active {
-    background-color: green;
-    color: white;
 }
 
 #feedback {
