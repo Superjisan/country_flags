@@ -2,6 +2,18 @@
     display: none !important;
 }
 
+:root {
+    --rated-flag-width: 3.3rem;
+    --rated-flag-gap: 0.45rem;
+}
+
+@media (max-width: 23rem) {
+    :root {
+        --rated-flag-width: 2.6rem;
+        --rated-flag-gap: 0.3rem;
+    }
+}
+
 body {
     font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     color: #1f2937;
@@ -446,21 +458,21 @@ p {
 }
 
 .ratings-table {
-    margin: 0.75rem auto 0;
+    margin: 1.1rem auto 0;
     border-collapse: collapse;
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 
 .ratings-table th {
-    width: 2rem;
-    padding: 0.3rem 0.75rem 0.3rem 0;
+    width: 3rem;
+    padding: 0.45rem 1.1rem 0.45rem 0;
     text-align: right;
     vertical-align: middle;
     color: #1f2937;
 }
 
 .ratings-table td {
-    padding: 0.3rem 0;
+    padding: 0.45rem 0;
     text-align: left;
     vertical-align: middle;
 }
@@ -472,8 +484,8 @@ p {
 
 .rated-flags {
     display: grid;
-    grid-template-columns: repeat(5, 2.2rem);
-    gap: 0.3rem;
+    grid-template-columns: repeat(5, var(--rated-flag-width));
+    gap: var(--rated-flag-gap);
     justify-items: center;
     align-items: center;
 }
@@ -484,10 +496,10 @@ p {
 }
 
 .rated-flag {
-    width: 2.2rem;
-    height: 1.4rem;
+    width: var(--rated-flag-width);
+    height: calc(var(--rated-flag-width) / 1.571);
     object-fit: cover;
-    border-radius: 0.2rem;
+    border-radius: 0.3rem;
     margin: 0;
     border: 1px solid rgba(15, 23, 42, 0.12);
     vertical-align: middle;
