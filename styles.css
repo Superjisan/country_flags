@@ -38,21 +38,29 @@ p {
 }
 
 #answer {
-    width: 20rem;
-    max-width: calc(100vw - 9rem);
+    width: 100%;
     min-width: 0;
-    font-size: 1.05rem;
-    height: 2.3rem;
-    padding: 0 0.75rem 0 0.9rem;
+    font-size: 1.25rem;
+    height: 2.9rem;
+    padding: 0 1rem;
     box-sizing: border-box;
+    background: #fff;
+    border: 2px solid #cbd5e1;
+    border-radius: 0.85rem;
+    box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.16), inset 0 -2px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+#answer:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.12), 0 0 0 3px rgba(79, 70, 229, 0.25);
 }
 
 #answer-wrapper {
     position: relative;
     display: inline-flex;
-    width: 20rem;
-    max-width: calc(100vw - 9rem);
-    flex: 0 0 auto;
+    width: 100%;
+    flex: 1 1 auto;
 }
 
 .answer-suggestions {
@@ -324,13 +332,20 @@ p {
 }
 
 #input-div {
-    width: min(100%, 30rem);
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     margin: 1rem auto;
     flex-wrap: nowrap;
+}
+
+/* two 14rem buttons and the 0.75rem gap between them */
+@media (min-width: 700px) {
+    #input-div {
+        width: min(100%, 28.75rem);
+    }
 }
 
 #input-div > #country {

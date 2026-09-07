@@ -448,9 +448,6 @@ export function syncActionButtons() {
   document.getElementById('answer').disabled = gameOver || !playView;
   document.getElementById('answer').hidden = isStudyMode || isRateMode;
   answerWrapper.hidden = isStudyMode || isRateMode;
-  answerWrapper.style.display = isStudyMode || isRateMode ? 'none' : '';
-  answerWrapper.style.width = isStudyMode || isRateMode ? 'auto' : '20rem';
-  answerWrapper.style.maxWidth = isStudyMode || isRateMode ? 'none' : 'calc(100vw - 9rem)';
   inputDiv.dataset.mode = isStudyMode ? 'study' : isRateMode ? 'rate' : 'play';
   inputDiv.hidden = false;
   document.getElementById('reveal-answer').hidden = !isStudyMode;
