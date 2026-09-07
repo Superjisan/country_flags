@@ -1,4 +1,4 @@
-import { assertEquals, assertMatch } from 'jsr:@std/assert@1';
+import { assert, assertEquals, assertMatch } from 'jsr:@std/assert@1';
 import { MODE_DATASETS } from '../js/game_state.js';
 import { setupDom, importGame } from './support/env.js';
 import { answerCurrentCountry } from './support/play.js';
@@ -148,9 +148,17 @@ Deno.test('rate mode exposes tier buttons and summarizes ratings at the end', as
   assertEquals(document.getElementById('rating-buttons').hidden, false);
   assertEquals(document.getElementById('share').hidden, true);
 
+  const countryName = document.getElementById('country');
+  assertEquals(countryName.hidden, false, 'rate mode names the country being rated');
+  assert(MODE_DATASETS.oceania.includes(countryName.innerText));
+
   const sButton = document.querySelector('[data-tier="S"]');
   assertEquals(sButton !== null, true);
+  const firstRated = countryName.innerText;
   sButton.click();
+
+  assertEquals(countryName.hidden, false, 'the next country is named too');
+  assert(countryName.innerText !== firstRated, 'rating moves on to another country');
 
   assertEquals(String(document.getElementById('progress-value').innerText), '1');
   assertEquals(document.getElementById('feedback').textContent.includes('S'), true);

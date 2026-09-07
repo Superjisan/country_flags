@@ -354,6 +354,10 @@ p {
     color: #111;
 }
 
+#input-div[data-mode="rate"] > #country {
+    font-size: 1.35rem;
+}
+
 #reveal-answer {
     height: 2.5rem;
     min-width: 8.5rem;

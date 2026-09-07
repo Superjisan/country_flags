@@ -147,7 +147,7 @@ export function showRateCountry() {
   }
   setCurrentCountry(nextCountry);
   document.getElementById('country').innerText = nextCountry;
-  document.getElementById('country').hidden = true;
+  document.getElementById('country').hidden = false;
   document.getElementById('progress-value').innerText = String(rateHistory.length);
   document.getElementById('total-countries').innerText = String(countries.length);
   updateCountryFlag(nextCountry);
