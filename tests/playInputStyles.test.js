@@ -39,3 +39,22 @@ Deno.test('the answer input is beveled and reads larger than the body text', () 
   assert(parseFloat(declaration(answer.body, 'font-size')) > 1, 'the typed answer should read larger than 1rem');
   assertEquals(declaration(answer.body, 'width'), '100%', 'the input fills its wrapper rather than a fixed width');
 });
+
+Deno.test('the answer buttons show a pointer cursor', () => {
+  const buttonRule = rules.find((rule) =>
+    rule.selector.split(',').map((part) => part.trim()).includes('#submit'));
+
+  assert(buttonRule, 'styles.css needs a rule covering #submit');
+  assert(buttonRule.selector.includes('#skip'), 'submit and skip are styled together');
+  assertEquals(declaration(buttonRule.body, 'cursor'), 'pointer');
+});
+
+Deno.test('empty feedback takes up no room', () => {
+  const feedback = rules.find((rule) => rule.selector === '#feedback');
+  assert(feedback, 'styles.css needs a #feedback rule');
+  assertEquals(declaration(feedback.body, 'min-height'), null, 'a reserved height keeps the gap even with nothing to say');
+
+  const emptyFeedback = rules.find((rule) => rule.selector === '#feedback:empty');
+  assert(emptyFeedback, '#feedback:empty should drop its margins');
+  assertEquals(parseFloat(declaration(emptyFeedback.body, 'margin')), 0);
+});

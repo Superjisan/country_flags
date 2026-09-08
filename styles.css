@@ -106,6 +106,7 @@ p {
 #skip,
 #replay,
 #share {
+    cursor: pointer;
     height: 2.25rem;
     color: white;
     width: 100%;
@@ -413,12 +414,15 @@ p {
 }
 
 #feedback {
-    margin-top: 1rem;
+    margin: 0.5rem auto 0;
     font-size: 1.2rem;
     font-weight: bold;
     text-align: center;
-    min-height: 1.5em;
     white-space: pre-line;
+}
+
+#feedback:empty {
+    margin: 0;
 }
 
 #score, #progress {
