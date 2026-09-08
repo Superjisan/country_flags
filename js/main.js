@@ -18,6 +18,12 @@ import { bindCountrySuggestions } from './datalist.js';
 
 export * from './flags_game.js';
 
+function trackEvent(name, params) {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', name, params);
+  }
+}
+
 registerCountryFlagErrorHandler();
 initGame();
 bindCountrySuggestions();
@@ -58,7 +64,13 @@ answerInput.addEventListener('keydown', (event) => {
   checkAnswer();
 });
 document.getElementById('submit').addEventListener('click', () => checkAnswer());
-document.getElementById('skip').addEventListener('click', () => checkAnswer(true));
+document.getElementById('skip').addEventListener('click', () => {
+  trackEvent('skip_flag', {
+    country: document.getElementById('country').innerText,
+    mode: document.querySelector('.continent-btn.active')?.id || 'world',
+  });
+  checkAnswer(true);
+});
 document.getElementById('replay').addEventListener('click', () => {
   const currentMode = document.querySelector('.continent-btn.active')?.id || 'world';
   switchMode(currentMode);
@@ -70,9 +82,18 @@ document.getElementById('share').addEventListener('click', () => {
   }
   shareScore();
 });
-document.getElementById('play-mode').addEventListener('click', () => setStudyMode(false));
-document.getElementById('study-mode').addEventListener('click', () => setStudyMode(true));
-document.getElementById('rate-mode').addEventListener('click', () => setRateMode(true));
+document.getElementById('play-mode').addEventListener('click', () => {
+  trackEvent('select_mode', { mode: 'play' });
+  setStudyMode(false);
+});
+document.getElementById('study-mode').addEventListener('click', () => {
+  trackEvent('select_mode', { mode: 'study' });
+  setStudyMode(true);
+});
+document.getElementById('rate-mode').addEventListener('click', () => {
+  trackEvent('select_mode', { mode: 'rate' });
+  setRateMode(true);
+});
 document.getElementById('study-prev').addEventListener('click', () => moveStudyIndex(-1));
 document.getElementById('study-next').addEventListener('click', () => moveStudyIndex(1));
 document.getElementById('reveal-answer').addEventListener('click', () => revealStudyCountry());
@@ -82,12 +103,21 @@ window.addEventListener('hashchange', () => {
   }
 });
 document.querySelectorAll('.rating-tier').forEach((button) => {
-  button.addEventListener('click', () => recordRateTier(button.dataset.tier));
+  button.addEventListener('click', () => {
+    trackEvent('rate_flag', {
+      country: document.getElementById('country').innerText,
+      tier: button.dataset.tier,
+    });
+    recordRateTier(button.dataset.tier);
+  });
 });
 
 // button listeners for continents
 Object.keys(MODE_DATASETS).forEach((mode) => {
-  document.getElementById(mode).addEventListener('click', () => switchMode(mode));
+  document.getElementById(mode).addEventListener('click', () => {
+    trackEvent('select_continent', { continent: mode });
+    switchMode(mode);
+  });
 });
 
 registerServiceWorker();
