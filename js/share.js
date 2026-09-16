@@ -174,7 +174,7 @@ export async function shareRating() {
   url.hash = `ct=${encodeURIComponent(shortContinent)}&r=${encodeRatingPayload(ratingsByTier)}`;
   
   const textSummary = buildRatingSummaryText({ ...ratingsByTier, continent });
-  const shareData = { text: `${textSummary}\n${url.toString()}`, url: url.toString() };
+  const shareData = { text: textSummary, url: url.toString() };
   
   if (navigator.share) {
     try {
@@ -186,7 +186,7 @@ export async function shareRating() {
   }
   const originalLabel = shareButton.innerText;
   try {
-    await navigator.clipboard.writeText(shareData.text);
+    await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
     shareButton.innerText = 'Copied to clipboard!';
   } catch (err) {
     shareButton.innerText = 'Could not share ratings';
