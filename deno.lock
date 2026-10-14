@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@1": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.14",
+    "npm:@openai/codex@0.153.0": "0.153.0",
     "npm:jsdom@25": "25.0.1"
   },
   "jsr": {
@@ -54,6 +55,48 @@
     },
     "@csstools/css-tokenizer@3.0.4": {
       "integrity": "sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw=="
+    },
+    "@openai/codex@0.153.0": {
+      "integrity": "sha512-k55kUZaclNi5ceUStSVuyW834ruA6AEdzTK7Xi3M1mOyXokUmq1sJLXm1RJ3XD2S7bRPeF1EXNsYB5Qxwus0mw==",
+      "optionalDependencies": [
+        "@openai/codex-darwin-arm64@npm:@openai/codex@0.153.0-darwin-arm64",
+        "@openai/codex-darwin-x64@npm:@openai/codex@0.153.0-darwin-x64",
+        "@openai/codex-linux-arm64@npm:@openai/codex@0.153.0-linux-arm64",
+        "@openai/codex-linux-x64@npm:@openai/codex@0.153.0-linux-x64",
+        "@openai/codex-win32-arm64@npm:@openai/codex@0.153.0-win32-arm64",
+        "@openai/codex-win32-x64@npm:@openai/codex@0.153.0-win32-x64"
+      ],
+      "bin": true
+    },
+    "@openai/codex@0.153.0-darwin-arm64": {
+      "integrity": "sha512-C9F3HVEYekVJC3WhiGSztcxItWBwd7Y6hTWoDqa9Z9aLWsYywzqChABB59n7G5F5jCil9wxW3+u2L6uiVUydmw==",
+      "os": ["darwin"],
+      "cpu": ["arm64"]
+    },
+    "@openai/codex@0.153.0-darwin-x64": {
+      "integrity": "sha512-DO5u+X/eL8pObrV0WDErOjS9DeuDvVuOL5oHR5y5Yklp0NGoGj3oOHsmaSXjGesiIiu3IX8l4pzS6dbeQXJAvQ==",
+      "os": ["darwin"],
+      "cpu": ["x64"]
+    },
+    "@openai/codex@0.153.0-linux-arm64": {
+      "integrity": "sha512-N2zLgmuslhMoC2RFC2aDkcCWk3iapZmBlSiESpjXFF+UMNxIpNxWJ5qQtQrCp5Md7kYbF4/EFy8RqJ8tL8UTeA==",
+      "os": ["linux"],
+      "cpu": ["arm64"]
+    },
+    "@openai/codex@0.153.0-linux-x64": {
+      "integrity": "sha512-sFF+g7p1o6sZVL6PHd9JTYrP2j3xao3Qeu5AngcrD5brWrCc+w9ifBJCJuRSM728WfgjXML9PQPdHPaZSeHAEA==",
+      "os": ["linux"],
+      "cpu": ["x64"]
+    },
+    "@openai/codex@0.153.0-win32-arm64": {
+      "integrity": "sha512-Ro+/2oAQnOObxuw3hpr+anv+j9hFmql/2iDxd7v0m46ctZy8x6ygW/Ud4f9CB1UXlRRsDhW+Tu9UAd5X9vTL1g==",
+      "os": ["win32"],
+      "cpu": ["arm64"]
+    },
+    "@openai/codex@0.153.0-win32-x64": {
+      "integrity": "sha512-eXvmitT1Hmr6d8n9r5HVjTuSgdHtxFSyXh0c3rRnaTcJA0ef8JnI5LY0TJci/QHYLNJGaEMBZ5R4dEdB2d87Lw==",
+      "os": ["win32"],
+      "cpu": ["x64"]
     },
     "agent-base@7.1.4": {
       "integrity": "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ=="
